@@ -101,20 +101,21 @@ rule subset:
         R1 = "data/subset/{sample}_R1.fastq.gz",
         R2 = "data/subset/{sample}_R2.fastq.gz"
     params:
-        head = 1000
+        rows = 1_000_000
     shell:
-        "zcat {input.R1} | head -{params.head} | gzip > {output.R1}; "
-        "zcat {input.R2} | head -{params.head} | gzip > {output.R2} "
+        "zcat {input.R1} | sed -n '1,{params.rows}p' | gzip -f > {output[0]}; "
+        "zcat {input.R2} | sed -n '1,{params.rows}p' | gzip -f > {output[1]} "
+# something wrong with the head function so I'm using sed for now
 
 rule bowtie2:
     input:
-        R1 = rules.rename.output["R1"],
-        R2 = rules.rename.output["R2"]
+        R1 = "data/subset/{sample}_R1.fastq.gz",
+        R2 = "data/subset/{sample}_R2.fastq.gz"
     output:
         "data/bowtie2/{sample}.bam"
     params:
         genome = config["genome"]
-    threads: 4
+    threads: 2
     conda:
         "workflow/envs/bowtie2.yaml"
     shell:
