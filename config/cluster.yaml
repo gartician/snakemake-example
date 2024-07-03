@@ -4,9 +4,9 @@ __default__:
   cpus-per-task: 1
   job-name: "{rule}"
   partition: exacloud
-  time: 01:00:00
+  time: 00:15:00
   mem: 8G
   error: "jobs/{rule}/%j.err"
-  error: "jobs/{rule}/%j.out"
+  out: "jobs/{rule}/%j.out"
 bowtie2:
   cpus-per-task: 4
